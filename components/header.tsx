@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { FirebaseError } from 'firebase/app';
 import { useContext } from 'react';
 import { AppContext } from '../pages/_app';
+import Link from 'next/link';
 
 const signIn = async () => {
   try {
@@ -42,9 +43,13 @@ export default function Header() {
   }
   return (
     <nav className='w-full flex justify-between items-center p-3 bg-primary text-on-primary text-xl'>
-      <div>
-        <strong>Sachin Blog</strong>
-      </div>
+      <Link href={'/'}>
+        <a>
+          <div>
+            <strong>Sachin Blog</strong>
+          </div>
+        </a>
+      </Link>
       {Nav}
     </nav>
   );

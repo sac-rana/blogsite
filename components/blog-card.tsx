@@ -1,20 +1,23 @@
-import { Blog, firestore } from '../lib/firebase';
-import { doc } from 'firebase/firestore';
-import { useDocumentDataOnce } from 'react-firebase-hooks/firestore';
+import { Blog } from '../lib/firebase';
+import removeMD from 'remove-markdown';
+import Link from 'next/link';
 
 const BlogCard = ({
   blog: { id, authorId, title, content, createdAt },
 }: {
   blog: Blog;
 }) => {
-  const docRef = doc(firestore, 'authors', authorId);
-  const [author, loading, error] = useDocumentDataOnce(docRef);
-  if (!author) return <div>Loading...</div>;
   return (
-    <div>
-      <h1>{author.name}</h1>
-      <h1>{title}</h1>
-    </div>
+    <Link href={`/blogs/${id}`}>
+      <a>
+        <div className='p-4 border-b-2 m-2 my-5 border-primary-variant w-1/2'>
+          <div className='flex justify-between pb-4'>
+            <h1 className='text-2xl font-bold'>{title}</h1>
+          </div>
+          <p>{removeMD(content).substring(0, 200)}</p>
+        </div>
+      </a>
+    </Link>
   );
 };
 

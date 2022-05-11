@@ -5,6 +5,7 @@ import {
   getFirestore,
   DocumentSnapshot,
   Timestamp,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
 const app = initializeApp({
@@ -26,6 +27,12 @@ export type Blog = {
   createdAt: Timestamp;
 };
 
+export type Author = {
+  id: string;
+  name: string;
+  blogs: string[];
+};
+
 export const blogConvertor = (
   snaphot: DocumentSnapshot<DocumentData>,
 ): Blog => {
@@ -39,5 +46,16 @@ export const blogConvertor = (
       data.createdAt.seconds,
       data.createdAt.nanoseconds,
     ),
+  };
+};
+
+export const authorConvertor = (
+  snaphot: QueryDocumentSnapshot<DocumentData>,
+): Author => {
+  const data = snaphot.data();
+  return {
+    id: snaphot.id,
+    name: data.name,
+    blogs: data.blogs,
   };
 };

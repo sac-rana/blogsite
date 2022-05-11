@@ -1,5 +1,5 @@
 import rehypeSanitize from 'rehype-sanitize';
-import { blogConvertor, firestore } from '../lib/firebase';
+import { blogConvertor, firestore } from '../../lib/firebase';
 import { useDocumentOnce } from 'react-firebase-hooks/firestore';
 import { doc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
@@ -19,8 +19,15 @@ export default function BlogPage() {
   }
   const blog = blogConvertor(snapshot!);
   return (
-    <div className='grid grid-cols-1'>
-      <MDPreview source={blog.content} rehypePlugins={[[rehypeSanitize]]} />
-    </div>
+    <main className='w-2/3 p-8'>
+      <h1 className='text-5xl font-bold leading-relaxed mb-6'>{blog.title}</h1>
+      <MDPreview
+        style={{
+          fontSize: '1.2em',
+        }}
+        source={blog.content}
+        rehypePlugins={[[rehypeSanitize]]}
+      />
+    </main>
   );
 }
