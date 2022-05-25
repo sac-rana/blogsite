@@ -1,36 +1,52 @@
 import { useContext, useState } from 'react';
 import rehypeSanitize from 'rehype-sanitize';
 import dynamic from 'next/dynamic';
-import { AppContext } from './_app';
-import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { AuthorContext, UserContext } from './_app';
+import {
+  setDoc,
+  doc,
+  serverTimestamp,
+  updateDoc,
+  arrayUnion,
+} from 'firebase/firestore';
 import { firestore } from '../lib/firebase';
 import { randomBytes } from 'crypto';
 import slugify from 'slugify';
 import BottomNav from '../components/bottom-nav';
 import { useRouter } from 'next/router';
+import { useAlert } from 'react-alert';
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
-function generateBlogId(blogTitle: string) {
-  return slugify(blogTitle) + '-' + randomBytes(12).toString('hex');
-}
-
 export default function Write() {
+  const alert = useAlert();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState<string | undefined>('');
-  const { user, loading } = useContext(AppContext);
+  const { user, loading } = useContext(UserContext);
+  const { author, loading: authorLoading } = useContext(AuthorContext);
   const router = useRouter();
-  if (loading) return <div>Loading...</div>;
+  if (loading || authorLoading) return <div>Loading...</div>;
   if (!user) return router.push('/');
+  if (!author) return router.push('/account');
 
   const uploadBlog = async () => {
-    if (!content || content.length < 100) return;
+    if (!content || content.length < 400) {
+      alert.error('Blog length must not be less than 400 characters.');
+      return;
+    }
+    if (title.length < 5) {
+      alert.error('Title length must not be less than 5 characters.');
+      return;
+    }
     const blogId = generateBlogId(title);
     await setDoc(doc(firestore, 'blogs', blogId), {
       authorId: user.uid,
       title,
       content,
       createdAt: serverTimestamp(),
+    });
+    await updateDoc(doc(firestore, 'authors', author.uid), {
+      blogIds: arrayUnion(blogId),
     });
   };
 
@@ -56,6 +72,7 @@ export default function Write() {
           rehypePlugins: [[rehypeSanitize]],
         }}
       />
+      <p>{content?.length} characters</p>
       <div className='flex justify-around py-4'>
         <button
           className='bg-primary text-on-primary font-bold py-1 px-3 rounded-lg m-5'
@@ -74,4 +91,8 @@ export default function Write() {
       <BottomNav />
     </main>
   );
+}
+
+function generateBlogId(blogTitle: string) {
+  return slugify(blogTitle) + '-' + randomBytes(12).toString('hex');
 }

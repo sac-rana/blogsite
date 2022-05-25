@@ -3,31 +3,27 @@ import type { NextPage } from 'next';
 import { useContext } from 'react';
 import BottomNav from '../components/bottom-nav';
 import { blogConvertor, firestore } from '../lib/firebase';
-import { AppContext } from './_app';
+import { UserContext } from './_app';
 import { useCollectionOnce } from 'react-firebase-hooks/firestore';
 import BlogCard from '../components/blog-card';
 
 const Home: NextPage = () => {
-  const { user, loading } = useContext(AppContext);
+  const { user } = useContext(UserContext);
   const q = query(collection(firestore, 'blogs'), limit(10));
   const [snapshot, blogsLoading, error] = useCollectionOnce(q);
-  if (error) {
-    throw error;
-  }
-  console.log(snapshot);
+  if (error) throw error;
   return (
-    <div>
+    <>
       <main>
         {blogsLoading && <h1>Loading...</h1>}
         {!blogsLoading &&
-          !error &&
           snapshot!.docs.map(doc => {
             const blog = blogConvertor(doc);
             return <BlogCard key={blog.id} blog={blog} />;
           })}
       </main>
       {user && <BottomNav />}
-    </div>
+    </>
   );
 };
 

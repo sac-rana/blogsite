@@ -9,7 +9,7 @@ export default function BottomNav() {
       <Link href='/write'>
         <a className='hover:text-secondary focus:text-secondary'>Write</a>
       </Link>
-      <Link href='#'>
+      <Link href='/account'>
         <a className='hover:text-secondary focus:text-secondary'>Account</a>
       </Link>
     </nav>

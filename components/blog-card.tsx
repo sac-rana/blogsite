@@ -12,9 +12,13 @@ const BlogCard = ({
       <a>
         <div className='p-4 border-b-2 m-2 my-5 border-primary-variant w-1/2'>
           <div className='flex justify-between pb-4'>
-            <h1 className='text-2xl font-bold'>{title}</h1>
+            <h1 className='text-2xl font-bold'>
+              {title} by {authorId} Date:{createdAt.toDate().toDateString()}
+            </h1>
           </div>
-          <p>{removeMD(content).substring(0, 200)}</p>
+          <p className='overflow-ellipsis'>
+            {removeMD(content).substring(0, 150)}
+          </p>
         </div>
       </a>
     </Link>
