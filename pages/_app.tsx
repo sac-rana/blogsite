@@ -48,7 +48,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [user, loading, error] = useAuthState(auth);
   const [author, authorLoading, authorError] = useAuthor(user?.uid);
   return (
-    <AlertProvider template={AlertTemplate} {...optionsk}>
+    <AlertProvider template={AlertTemplate} {...options}>
       <UserContext.Provider value={{ user, loading, error }}>
         <AuthorContext.Provider
           value={{ author, loading: authorLoading, error: authorError }}
